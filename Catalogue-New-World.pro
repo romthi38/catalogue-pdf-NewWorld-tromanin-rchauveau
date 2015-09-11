@@ -16,7 +16,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    generationpdf.cpp
+    generationpdf.cpp \
+    rayon.cpp \
+    typeproduit.cpp \
+    produit.cpp
 
 HEADERS += \
-    generationpdf.h
+    generationpdf.h \
+    rayon.h \
+    typeproduit.h \
+    produit.h
