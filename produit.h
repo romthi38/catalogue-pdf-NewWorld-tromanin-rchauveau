@@ -6,7 +6,6 @@
 * @date vendredi 11 septembre 2015, 15:04:00
 * @class Produit
 */
-
 #ifndef PRODUIT_H
 #define PRODUIT_H
 
