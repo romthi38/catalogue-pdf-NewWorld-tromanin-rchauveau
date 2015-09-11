@@ -10,10 +10,20 @@
 #ifndef GENERATIONPDF_H
 #define GENERATIONPDF_H
 
+#include <QString>
+#include <iostream>
+#include <QDate>
+
 class GenerationPdf
 {
 public:
+    QString nom;
+    QDate dateGeneration;
+
+    GenerationPdf(QString n, QDate d);
     GenerationPdf();
+
+    void ecrireTexte(QString leTexte );
 };
 
 #endif // GENERATIONPDF_H
