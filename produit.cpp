@@ -21,11 +21,11 @@ Produit::Produit(int n, QString lib, int pu, int qte, QDate dlc)
     requeteP.exec("SELECT noProduit, libelleProduit, prixUnitaireLot, quantiteLot, dateLimitConso FROM PRODUIT");
     while(requeteP.next())
     {
-        int noProduit = requete.value(0).toInt();
-        QString libelleProduit = requete.value(1).toString();
-        int prixUnitaireLot = requete.value(2).toInt();
-        int quantiteLot = requete.value(3).toInt();
-        QDate dateLimitConso = requete.value(4).toInt();
+        int noProduit = requeteP.value(0).toInt();
+        QString libelleProduit = requeteP.value(1).toString();
+        int prixUnitaireLot = requeteP.value(2).toInt();
+        int quantiteLot = requeteP.value(3).toInt();
+        QDate dateLimitConso = requeteP.value(4).toInt();
     }
 }
 Produit::Produit()

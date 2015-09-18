@@ -18,8 +18,8 @@ Rayon::Rayon(int no, QString lib)
     requeteR.exec("SELECT noRayon, libelleRayon FROM RAYON");
     while(requeteR.next())
     {
-        int noRayon = requete.value(0).toInt();
-        QString libelleRayon = requete.value(1).toString();
+        int noRayon = requeteR.value(0).toInt();
+        QString libelleRayon = requeteR.value(1).toString();
     }
 }
 

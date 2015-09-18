@@ -16,8 +16,8 @@ TypeProduit::TypeProduit(int n, QString l)
     requeteTP.exec("SELECT noTypeProduit, libelleTypeProduit FROM TYPEPRODUIT");
     while(requeteTP.next())
     {
-        int noTypeProduit = requete.value(0).toInt();
-        QString libelleTypeProduit = requete.value(1).toString();
+        int noTypeProduit = requeteTP.value(0).toInt();
+        QString libelleTypeProduit = requeteTP.value(1).toString();
     }
 }
 
