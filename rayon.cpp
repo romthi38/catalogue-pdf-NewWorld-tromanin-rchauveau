@@ -20,13 +20,13 @@ Rayon::Rayon()
 
 
 //retourne le libelle du rayon
-Rayon::getLibelleRayon()
+QString Rayon::getLibelleRayon()
 {
     return libelleRayon;
 }
 
 //retourne le numéro du rayon
-Rayon::getNoRayon()
+int Rayon::getNoRayon()
 {
     return noRayon;
 }
