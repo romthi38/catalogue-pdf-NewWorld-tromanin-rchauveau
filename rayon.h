@@ -9,11 +9,25 @@
 
 #ifndef RAYON_H
 #define RAYON_H
+#include <QString>
 
 class Rayon
 {
+private:
+    int noRayon; // numéro du rayon
+    QString libelleRayon; //libelle du rayon
+
 public:
+    //constructeur
+    Rayon(int no, QString lib);
     Rayon();
+
+    //retourne le libelle du rayon
+    QString getLibelleRayon();
+
+    //retourne le numéro du rayon
+    int getNoRayon();
+
 };
 
 #endif // RAYON_H
