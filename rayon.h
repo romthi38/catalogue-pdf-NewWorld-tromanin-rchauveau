@@ -10,6 +10,13 @@
 #ifndef RAYON_H
 #define RAYON_H
 #include <QString>
+#include <QtSql>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlTableModel>
+#include <QtSql/QSqlRecord>
+#include <QSqlQuery>
+#include <QTableView>
+#include <QSqlRecord>
 
 class Rayon
 {
