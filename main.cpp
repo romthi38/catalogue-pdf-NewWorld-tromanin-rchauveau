@@ -1,11 +1,12 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <iostream>
+using namespace std;
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    
+
     // Connexion à la base de donnée
     QSqlDatabase * baseBornes;
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
     baseBornes->setPassword("PPhdu14Zer");
     baseBornes->open();
 
+    cout<<"Generation du catalogue..."<<endl;
 
-    cout<<("Generation du catalogue...");
     return a.exec();
 }
