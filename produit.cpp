@@ -25,7 +25,7 @@ Produit::Produit(int n, QString lib, int pu, int qte, QDate dlc)
         QString libelleProduit = requeteP.value(1).toString();
         int prixUnitaireLot = requeteP.value(2).toInt();
         int quantiteLot = requeteP.value(3).toInt();
-        QDate dateLimitConso = requeteP.value(4).toInt();
+        QDate dateLimitConso = requeteP.value(4).toDate();
     }
 }
 Produit::Produit()
