@@ -8,30 +8,44 @@
 
 #include "produit.h"
 
+
 //constructeur
-Produit::Produit(int n, QString lib)
+Produit::Produit(int n, QString lib, int pu, int qte, QDate dlc)
 {
     noProduit = no;
     libelleProduit = lib;
+    prixUnitaireLot = pu;
+    quantiteLot = qte;
+    dateLimitConso = dlc;
 }
 Produit::Produit()
 {
 }
 
 
-Produit::getLibelleProduit()
+//retourne le libelle du produit
+QString Produit::getLibelleProduit()
 {
+    return libelleProduit;
 }
 
-Produit::getPrixUnitaireLot()
+//retourne le prixUnitaire
+int Produit::getPrixUnitaireLot()
 {
+    return prixUnitaireLot;
 }
 
-Produit::getQuantiteLot()
+
+//retourne la quantite
+int Produit::getQuantiteLot()
 {
+    return quantiteLot;
 }
 
-Produit::getDateLimiteConsomationLot()
+
+//retourne la dateLimiConso
+QDate Produit::getDateLimiteConsomationLot()
 {
+    return dateLimitConso;
 }
 

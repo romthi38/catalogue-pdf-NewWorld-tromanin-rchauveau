@@ -23,7 +23,10 @@ public:
     GenerationPdf(QString n, QDate d);
     GenerationPdf();
 
+    //ecrit le texte sur le pdf
     void ecrireTexte(QString leTexte );
+    //ferme le document pdf
+    void fermer();
 };
 
 #endif // GENERATIONPDF_H

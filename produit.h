@@ -11,6 +11,7 @@
 
 #include <QString>
 #include <iostream>
+#include <QDate>
 
 using namespace std;
 
@@ -34,12 +35,15 @@ using namespace std;
 class Produit
 {
 private:
-    int noProduit;
-    QString libelleProduit;
+    int noProduit; //numéro du produit
+    QString libelleProduit; //libelle du produit
+    int prixUnitaireLot; //prix unitaire du lot de produit
+    int quantiteLot; //quantite de produit dans le lot
+    QDate dateLimitConso; //date limitConso des produits
 
 public:
     //constructeur
-    Produit(int n, QString lib);
+    Produit(int n, QString lib, int pu, int qte, QDate dlc);
     Produit();
 
     //retourne le libelle du produit
