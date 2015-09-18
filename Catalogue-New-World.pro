@@ -6,8 +6,8 @@
 
 QT       += core
 QT       +=sql
-
-QT       -= gui
+QT       += printsupport
+QT       += core gui
 
 TARGET = Catalogue-New-World
 CONFIG   += console
