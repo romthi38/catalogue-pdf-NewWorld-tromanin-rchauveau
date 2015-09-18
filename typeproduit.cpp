@@ -8,6 +8,23 @@
 
 #include "typeproduit.h"
 
+TypeProduit::TypeProduit(int n, QString l)
+{
+    noTypeProduit = n;
+    libelleTypeProduit = l;
+}
+
 TypeProduit::TypeProduit()
 {
+
+}
+
+QString TypeProduit::getLibelleTypeProduit()
+{
+    return libelleTypeProduit;
+}
+
+int TypeProduit::getNoTypeProduit()
+{
+    return noTypeProduit;
 }

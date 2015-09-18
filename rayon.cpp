@@ -7,25 +7,26 @@
 */
 #include "rayon.h"
 
-//constructeur
+// Constructeur du rayon
 Rayon::Rayon(int no, QString lib)
 {
     noRayon=no;
     libelleRayon=lib;
 }
 
+// Constructeur vide
 Rayon::Rayon()
 {
 }
 
 
-//retourne le libelle du rayon
+// Retourne le libelle du rayon
 QString Rayon::getLibelleRayon()
 {
     return libelleRayon;
 }
 
-//retourne le numéro du rayon
+// Retourne le numéro du rayon
 int Rayon::getNoRayon()
 {
     return noRayon;

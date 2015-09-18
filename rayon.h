@@ -14,18 +14,20 @@
 class Rayon
 {
 private:
-    int noRayon; // numéro du rayon
-    QString libelleRayon; //libelle du rayon
+    // Numéro du rayon
+    int noRayon;
+    // Libelle du rayon
+    QString libelleRayon;
 
 public:
-    //constructeur
+    // Constructeur
     Rayon(int no, QString lib);
     Rayon();
 
-    //retourne le libelle du rayon
+    // Retourne le libellé du rayon
     QString getLibelleRayon();
 
-    //retourne le numéro du rayon
+    // Retourne le numéro du rayon
     int getNoRayon();
 
 };
