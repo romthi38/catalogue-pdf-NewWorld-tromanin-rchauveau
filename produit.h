@@ -12,6 +12,7 @@
 #include <QString>
 #include <iostream>
 #include <QDate>
+#include "typeproduit.h"
 
 using namespace std;
 
