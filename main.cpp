@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <iostream>
+#include <QPrinter>
+#include <QPainter>
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -18,6 +20,16 @@ int main(int argc, char *argv[])
     baseBornes->open();
 
     cout<<"Generation du catalogue..."<<endl;
+
+    QPrinter printer;
+    printer.setOutputFileName("catalogueNW.pdf");//nom du pdf
+    printer.setOutputFormat(QPrinter::PdfFormat); //format du pdf
+
+
+
+
+
+
 
     return a.exec();
 }
