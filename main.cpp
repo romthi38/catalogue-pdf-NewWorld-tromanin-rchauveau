@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QtGui/QPrinter>
 #include <QtGui/QPainter>
+#include <QPoint>
 
 using namespace std;
 
@@ -28,8 +29,10 @@ int main(int argc, char *argv[])
     printer.setOutputFileName("catalogueNW.pdf");
     QPainter painter;
     painter.begin(&printer);
-    painter.setFont(QFont("Tahoma",8));
-    painter.drawText(200,200,"HELOOOO");
+    painter.setFont(QFont("Tahoma",25));
+    //painter.setPen(QColor(0, 0, 128, 128));
+
+    painter.drawText(2500,250,"Catalogue New World");
     painter.end();
 
     return 0;
