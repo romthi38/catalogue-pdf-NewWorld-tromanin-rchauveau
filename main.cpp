@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -15,5 +16,7 @@ int main(int argc, char *argv[])
     baseBornes->setPassword("PPhdu14Zer");
     baseBornes->open();
 
+
+    cout<<("Generation du catalogue...");
     return a.exec();
 }
