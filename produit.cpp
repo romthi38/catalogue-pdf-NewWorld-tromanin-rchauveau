@@ -12,7 +12,7 @@
 //constructeur
 Produit::Produit(int n, QString lib, int pu, int qte, QDate dlc)
 {
-    noProduit = no;
+    noProduit = n;
     libelleProduit = lib;
     prixUnitaireLot = pu;
     quantiteLot = qte;
