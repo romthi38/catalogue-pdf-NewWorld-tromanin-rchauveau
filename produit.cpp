@@ -17,6 +17,16 @@ Produit::Produit(int n, QString lib, int pu, int qte, QDate dlc)
     prixUnitaireLot = pu;
     quantiteLot = qte;
     dateLimitConso = dlc;
+    QSqlQuery requeteP;
+    requeteP.exec("SELECT noProduit, libelleProduit, prixUnitaireLot, quantiteLot, dateLimitConso FROM PRODUIT");
+    while(requeteP.next())
+    {
+        int noProduit = requete.value(0).toInt();
+        QString libelleProduit = requete.value(1).toString();
+        int prixUnitaireLot = requete.value(2).toInt();
+        int quantiteLot = requete.value(3).toInt();
+        QDate dateLimitConso = requete.value(4).toInt();
+    }
 }
 Produit::Produit()
 {
