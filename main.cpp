@@ -34,13 +34,27 @@ int main(int argc, char *argv[])
     painter.setFont(QFont("Tahoma",25));
     //painter.setPen(QColor(0, 0, 128, 128));
 
-    QSqlQuery query;
+    /*QSqlQuery query;
     query.exec("SELECT libelle, noType FROM produit");
+    int v1 = 150;
+    int v2 = 500;
     while(query.next())
     {
-        qDebug()<<query.value(0).toString();
-    }
+        QString test = query.value(0).toString();
+        v2 = v2 + 500;
+        painter.drawText(v1,v2,test);
+    }*/
 
+    QSqlQuery queryPdv;
+    queryPdv.exec("SELECT no, libelle, activite, nomResponsable FROM produit");
+    int v1 = 150;
+    int v2 = 500;
+    while(query.next())
+    {
+        QString test = query.value(0).toString();
+        v2 = v2 + 500;
+        painter.drawText(v1,v2,test);
+    }
     painter.drawText(2500,250,"Catalogue New World");
 
 
