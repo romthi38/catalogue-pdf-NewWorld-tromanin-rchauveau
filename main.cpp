@@ -46,14 +46,27 @@ int main(int argc, char *argv[])
     }*/
 
     QSqlQuery queryPdv;
-    queryPdv.exec("SELECT no, libelle, activite, nomResponsable FROM produit");
-    int v1 = 150;
-    int v2 = 500;
-    while(query.next())
+    queryPdv.exec("SELECT no, libelle, activite, nom, prenom, tel, rue1, cp, ville FROM ptsDeVente where no = 1");
+    while(queryPdv.next())
     {
-        QString test = query.value(0).toString();
-        v2 = v2 + 500;
-        painter.drawText(v1,v2,test);
+        //int leNo = queryPdv.value(0).toInt();
+        //painter.drawText(100,150,leNo);
+        QString leLib = queryPdv.value(1).toString();
+        painter.drawText(150,150,leLib);
+        QString act = queryPdv.value(2).toString();
+        painter.drawText(200,150,act);
+        QString leNom = queryPdv.value(3).toString();
+        painter.drawText(250,150,leNom);
+        QString lePrenom = queryPdv.value(4).toString();
+        painter.drawText(300,150,lePrenom);
+        QString leTel = queryPdv.value(5).toString();
+        painter.drawText(350,150,leTel);
+        QString laRue = queryPdv.value(6).toString();
+        painter.drawText(400,150,laRue);
+        QString leCP = queryPdv.value(7).toString();
+        painter.drawText(450,150,leCP);
+        QString laVille = queryPdv.value(8).toString();
+        painter.drawText(500,150,laVille);
     }
     painter.drawText(2500,250,"Catalogue New World");
 
