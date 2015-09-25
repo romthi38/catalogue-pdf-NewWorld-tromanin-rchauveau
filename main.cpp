@@ -4,6 +4,8 @@
 #include <QtGui/QPrinter>
 #include <QtGui/QPainter>
 #include <QPoint>
+#include <QSqlQuery>
+#include <QDebug>
 
 using namespace std;
 
@@ -32,7 +34,17 @@ int main(int argc, char *argv[])
     painter.setFont(QFont("Tahoma",25));
     //painter.setPen(QColor(0, 0, 128, 128));
 
+    QSqlQuery query;
+    query.exec("SELECT libelle, noType FROM produit");
+    while(query.next())
+    {
+        qDebug()<<query.value(0).toString();
+    }
+
     painter.drawText(2500,250,"Catalogue New World");
+
+
+
     painter.end();
 
     return 0;
