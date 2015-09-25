@@ -36,43 +36,74 @@ int main(int argc, char *argv[])
 
     /*QSqlQuery query;
     query.exec("SELECT libelle, noType FROM produit");
-    int v1 = 150;
-    int v2 = 500;
+    int horizontale = 150;
+    int verticale = 500;
     while(query.next())
     {
         QString test = query.value(0).toString();
-        v2 = v2 + 500;
-        painter.drawText(v1,v2,test);
+        verticale = verticale + 500;
+        painter.drawText(horizontale,verticale,test);
     }*/
 
+
+    painter.drawText(2500,2000,"Catalogue New World");
+    painter.end();
+    painter.begin(&printer);
     QSqlQuery queryPdv;
-    queryPdv.exec("SELECT no, libelle, activite, nom, prenom, tel, rue1, cp, ville FROM ptsDeVente where no = 1");
+    queryPdv.exec("SELECT no, libelle, activite, nom, prenom, tel, rue1, cp, ville FROM ptsDeVente");
+    int horizontale = 150;
+    int verticale = 3000;
+
     while(queryPdv.next())
     {
-        //int leNo = queryPdv.value(0).toInt();
-        //painter.drawText(100,150,leNo);
+        painter.setFont(QFont("Tahoma",8));
+        QString leNo = queryPdv.value(0).toString();
+        painter.drawText(horizontale,100,"N. " + leNo);
         QString leLib = queryPdv.value(1).toString();
-        painter.drawText(150,150,leLib);
+        painter.drawText(horizontale,250,leLib);
         QString act = queryPdv.value(2).toString();
-        painter.drawText(200,150,act);
+        painter.drawText(horizontale,400,act);
         QString leNom = queryPdv.value(3).toString();
-        painter.drawText(250,150,leNom);
         QString lePrenom = queryPdv.value(4).toString();
-        painter.drawText(300,150,lePrenom);
+        painter.drawText(horizontale,550,leNom + " " + lePrenom);
         QString leTel = queryPdv.value(5).toString();
-        painter.drawText(350,150,leTel);
+        painter.drawText(horizontale,700,"Tel. " + leTel);
         QString laRue = queryPdv.value(6).toString();
-        painter.drawText(400,150,laRue);
+        painter.drawText(horizontale,850,laRue);
         QString leCP = queryPdv.value(7).toString();
-        painter.drawText(450,150,leCP);
+        painter.drawText(horizontale,1000,leCP);
         QString laVille = queryPdv.value(8).toString();
-        painter.drawText(500,150,laVille);
+        painter.drawText(horizontale,1150,laVille);
+        horizontale = horizontale + 2000;
+
+        painter.setFont(QFont("Tahoma",18));
+        painter.drawText(250,verticale - 350,"Point de vente : "+leLib);
+
+        //les rayons
+        QSqlQuery queryRayon;
+        queryRayon.exec("select libelle, no from surType");
+        while(queryRayon.next())
+        {
+
+            painter.setFont(QFont("Tahoma",14));
+            QString lib=queryRayon.value(0).toString();
+            QString noRayon=queryRayon.value(1).toString();
+            painter.drawText(400,verticale,"Rayon : "+lib);
+            verticale = verticale + 300;
+
+            //type de produit
+            QSqlQuery queryTypeProduit;
+            queryTypeProduit.exec("Select libelle from typeP where noSurType =" + QString(noRayon));
+            while(queryTypeProduit.next())
+            {
+                painter.setFont(QFont("Tahoma",11));
+                QString libTypeProduit=queryTypeProduit.value(0).toString();
+                painter.drawText(1400,verticale,libTypeProduit);
+                verticale = verticale + 300;
+            }
+        }
+        verticale = verticale + 500;
     }
-    painter.drawText(2500,250,"Catalogue New World");
-
-
-
     painter.end();
-
     return 0;
 }
