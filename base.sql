@@ -2,8 +2,6 @@
 drop table if exists proposerA;
 drop table if exists lot;
 drop table if exists ptsDeVente;
-drop table if exists choisir;
-drop table if exists question;
 drop table if exists utilisateur;
 drop table if exists produit;
 drop table if exists typeP;
