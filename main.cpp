@@ -36,13 +36,13 @@ int main(int argc, char *argv[])
 
     /*QSqlQuery query;
     query.exec("SELECT libelle, noType FROM produit");
-    int horizontale = 150;
-    int verticale = 500;
+    int horizontale1 = 150;
+    int verticale1 = 500;
     while(query.next())
     {
         QString test = query.value(0).toString();
-        verticale = verticale + 500;
-        painter.drawText(horizontale,verticale,test);
+        verticale1 = verticale1 + 500;
+        painter.drawText(horizontale1,verticale1,test);
     }*/
 
 
