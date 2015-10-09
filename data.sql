@@ -1,7 +1,6 @@
 INSERT INTO ptsDeVente (no,libelle,activite,nom,prenom,tel,rue1,cp,ville) VALUES
 (1,"Paysans bio","epicerie","borel","gregoire","0492687514","10 boulevard Pompidou","05000","Gap"),
-(2,"l’eau vive","supermarche","durand","mauricette","0492154867","10 avenue d emb
-run","05000","Gap"),
+(2,"l’eau vive","supermarche","durand","mauricette","0492154867","10 avenue d'embrun","05000","Gap"),
 (3,"Leclerc","supermarche","leclerc","edouard","0492515168","8 Z.I Tokoro","05000","Gap"),
 (4,"fruits et legumes embrunais","marche","lagrange","georgette","0492446328","5 place victor hugo","05200","Embrun"),
 (5,"au bon panier","boucherie","lagneau","jean","0492484897","26 rue du pin","05100","Briançon");
