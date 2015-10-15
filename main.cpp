@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
         //les rayons
         QSqlQuery queryRayon;
-        queryRayon.exec("select distinct surType.libelle, surType.no from surType inner join typeP on surType.no=typeP.noSurType inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot where proposerA.noPointDeVente = 1");
+        queryRayon.exec("select distinct surType.libelle, surType.no from surType inner join typeP on surType.no=typeP.noSurType inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient);
         while(queryRayon.next())
         {
             painter.setPen(QColor(77,88,235,255));
@@ -121,7 +121,8 @@ int main(int argc, char *argv[])
 
             //type de produit
             QSqlQuery queryTypeProduit;
-            queryTypeProduit.exec("Select libelle, no from typeP where noSurType =" + QString(noRayon));
+            //queryTypeProduit.exec("Select libelle, no from typeP where noSurType =" + QString(noRayon));
+            queryTypeProduit.exec("Select distinct typeP.libelle, typeP.no from typeP inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noSurType ="+QString(noRayon));
             while(queryTypeProduit.next())
             {
                 painter.setFont(QFont("Tahoma",11));
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
 
                 QSqlQuery queryProduit;
                 queryProduit.exec("Select libelle, no from produit where noType =" + QString(noTypeProduit));
+                //queryTypeProduit.exec("Select distinct produit.libelle, produit.no from produit inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noType ="+QString(noTypeProduit));
                 while(queryProduit.next())
                 {
                     painter.setFont(QFont("Tahoma",11));
