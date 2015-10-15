@@ -121,7 +121,6 @@ int main(int argc, char *argv[])
 
             //type de produit
             QSqlQuery queryTypeProduit;
-            //queryTypeProduit.exec("Select libelle, no from typeP where noSurType =" + QString(noRayon));
             queryTypeProduit.exec("Select distinct typeP.libelle, typeP.no from typeP inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noSurType ="+QString(noRayon));
             while(queryTypeProduit.next())
             {
@@ -133,19 +132,29 @@ int main(int argc, char *argv[])
                 img = img.scaledToHeight(500);
                 //img.load(libTypeProduit+".png");
                 painter.drawImage(QPoint(1000,verticale+100),img);
-                painter.drawRect(700,verticale - 200,8100,900);
                 painter.drawText(1000,verticale,libTypeProduit);
                 verticale = verticale + 300;
 
                 QSqlQuery queryProduit;
-                queryProduit.exec("Select libelle, no from produit where noType =" + QString(noTypeProduit));
-                //queryTypeProduit.exec("Select distinct produit.libelle, produit.no from produit inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noType ="+QString(noTypeProduit));
+                //queryProduit.exec("Select libelle, no from produit where noType =" + QString(noTypeProduit));
+                queryProduit.exec("Select distinct produit.libelle, produit.no, count(produit.libelle) from produit inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noType ="+QString(noTypeProduit));
                 while(queryProduit.next())
                 {
                     painter.setFont(QFont("Tahoma",11));
                     QString libProduit = queryProduit.value(0).toString();
                     QString noProduit = queryProduit.value(1).toString();
-                    painter.drawText(2200,verticale,libProduit);
+                    QImage img(libProduit+".jpg");
+                    img = img.scaledToHeight(300);
+                    painter.drawImage(QPoint(3700,verticale + 250),img);
+                    painter.drawRect(700,verticale - 200,8100,900);
+                    painter.drawText(1900,verticale,libProduit);
+
+                    int nbProduits = queryProduit.value(2).toInt();
+                    int cptTaille;
+                    cptTaille = nbProduits * 300;
+
+                    // Notre lot
+
                     QSqlQuery queryLot("Select qte, prixUnitaire, unite, modeDeProd, dateDeRecolte, nbrJoursDeConservation from lot where no="+QString(noProduit));
                     while(queryLot.next())
                     {
@@ -162,9 +171,8 @@ int main(int argc, char *argv[])
                         painter.drawText(6800,verticale,dateDeRecolteLot);
                         painter.drawText(8000,verticale,nbrJoursDeConservationLot+" jour(s)");
                     }
-
-                    verticale = verticale + 300;
-                }
+                    verticale = verticale + cptTaille;
+                }                
             }
             verticale = verticale + 200;
         }
