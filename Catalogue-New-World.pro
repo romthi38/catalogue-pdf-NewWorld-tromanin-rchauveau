@@ -1,29 +1,16 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-09-11T14:07:41
+# Project created by QtCreator 2016-06-01T16:10:03
 #
 #-------------------------------------------------
 
-QT       += core
-QT       +=sql
-QT       += printsupport
-QT       +=gui
+QT       += core sql printsupport gui
 
-TARGET = Catalogue-New-World
+TARGET = catalogueNW
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
-    generationpdf.cpp \
-    rayon.cpp \
-    typeproduit.cpp \
-    produit.cpp
-
-HEADERS += \
-    generationpdf.h \
-    rayon.h \
-    typeproduit.h \
-    produit.h
+SOURCES += main.cpp
