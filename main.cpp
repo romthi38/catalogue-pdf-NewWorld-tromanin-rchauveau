@@ -11,9 +11,19 @@
 
 using namespace std;
 
+void createfooter(QPainter *painter, QDate *dateDuJour, int cptPage){
+    painter->setPen(QColor(0,0,0,255));
+    painter->setFont(QFont("Tahoma",10));
+    QString dateFooter = dateDuJour->toString("'Catalogue généré le' dd/MM/yyyy");
+    QString copyright = "© Copyright New World 2016 - Thibault ROMANIN & Rémi CHAUVEAU";
+    painter->drawText(150,12800,dateFooter);
+    painter->drawText(150,13100,copyright);
+    painter->drawText(9000,13100,QString::number(cptPage));
+    painter->drawLine(0,12500,9100,12500);
+}
+
 int main(int argc, char *argv[])
 {
-
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
@@ -32,161 +42,274 @@ int main(int argc, char *argv[])
     cout<<"| Génération du catalogue |"<<endl;
     cout<<"***************************"<<endl;
 
-
+    // TODO : afficher les points de vente où le lot est disponible
 
     QApplication a(argc, argv);
-
-    //client
+    
+    // Pour chaque utilisateur
     QSqlQuery queryUtilisateur;
-    queryUtilisateur.exec("SELECT no from utilisateur");
+    queryUtilisateur.exec("SELECT usId FROM Utilisateur WHERE usTypeUtilisateur = 2");
     while(queryUtilisateur.next())//pour chaque clients
     {
-        QString noClient = queryUtilisateur.value(0).toString();//on récupère le numéro du client
+        // On récupère l'id de l'utilisateur
+        QString idUtilisateur = queryUtilisateur.value(0).toString();
+        qDebug() << "Id utilisateur : " + idUtilisateur;
 
+        // Date du jour pour le titre du fichier pdf
         QDate dateDuJour = QDate::currentDate();
         QString maDate = dateDuJour.toString("dd-MM-yyyy");
-        QSqlQuery queryNoPdv;
-        queryNoPdv.exec("SELECT ptsDeVente.no FROM ptsDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on utilisateur.no=QAO.noUtilisateur where QAO.noUtilisateur="+noClient+" order by ptsDeVente.no");
-        QString monNoPdv = maDate;
-        while(queryNoPdv.next())
+
+        // On récupère l'id du point de vente pour le titre du fichier pdf
+        QSqlQuery queryIdPdv;
+        queryIdPdv.exec("SELECT PointVente.pvId FROM PointVente INNER JOIN QuiAcheteOu ON PointVente.pvId = QuiAcheteOu.idPointVente INNER JOIN Utilisateur ON Utilisateur.usId = QuiAcheteOu.idUtilisateur WHERE QuiAcheteOu.idUtilisateur=" + idUtilisateur + " ORDER BY PointVente.pvId");
+
+        // On ajoute au titre du fichier pdf les numéros de tous les points de ventes qu'un utilisateur a choisi
+        QString nomFichierPdf = maDate;
+        while(queryIdPdv.next())
         {
-            monNoPdv=monNoPdv+"_"+queryNoPdv.value(0).toString();
+            nomFichierPdf += "_"+queryIdPdv.value(0).toString();
         }
+
+        // Création du fichier
         QPrinter printer(QPrinter::HighResolution);
         printer.setFullPage(QPrinter::A4);
         printer.setOutputFormat(QPrinter::NativeFormat);
-        printer.setOutputFileName("catalogueNW_"+monNoPdv+".pdf");
+        printer.setOutputFileName("catalogueNW_"+nomFichierPdf+".pdf");
+
+        // Création du painter
         QPainter painter;
         painter.begin(&printer);
-        painter.setFont(QFont("Tahoma",25));
 
-        painter.drawText(2500,2000,"Catalogue New World");
-        painter.end();
-        painter.begin(&printer);
-        QSqlQuery queryPdv;
-        queryPdv.exec("SELECT ptsDeVente.no, ptsDeVente.libelle, ptsDeVente.activite, ptsDeVente.nom, ptsDeVente.prenom, ptsDeVente.tel, ptsDeVente.rue1, ptsDeVente.cp, ptsDeVente.ville FROM ptsDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on utilisateur.no=QAO.noUtilisateur where QAO.noUtilisateur="+noClient+" order by ptsDeVente.no");
+        // Initialisation de variables
         int horizontale = 150;
-        int verticale = 3500;
+        int verticale = 1800;
+        int cptPage = 1;
 
+        // Entête fichier pdf
+        QImage img("logo.png");
+        img.load("logo.png");
+        painter.drawImage(QPoint(0,100),img);
+
+        // Début des points de vente (changement police)
         painter.setPen(QColor(77,88,235,255));
         painter.setFont(QFont("Tahoma",13));
-        painter.drawText(230,1600,"Point(s) de ventes");
+        painter.drawText(190,1600,"Point(s) de vente");
 
+        // Footer
+        createfooter(&painter,&dateDuJour,cptPage);
+        painter.drawLine(0,1300,9100,1300);
+        //painter.drawLine(0,3100,9100,3100);
+        //painter.drawLine(9100,1300,9100,3100);
+
+        // On sélectionne tous les points de ventes de l'utilisateur
+        QSqlQuery queryPdv;
+        queryPdv.exec("SELECT PointVente.pvId, PointVente.pvLibelle, PointVente.pvActivite, PointVente.pvNomResponsable, PointVente.pvPrenomResponsable, PointVente.pvTelResponsable, PointVente.pvAdresse1, Localite.locCP, Localite.locNomCommune, PointVente.pvEmailResponsable FROM PointVente INNER JOIN QuiAcheteOu ON PointVente.pvId = QuiAcheteOu.idPointVente INNER JOIN Localite ON Localite.locCodeInsee = PointVente.pvLocalite INNER JOIN Utilisateur ON Utilisateur.usId = QuiAcheteOu.idUtilisateur WHERE QuiAcheteOu.idUtilisateur = " + idUtilisateur + " ORDER BY PointVente.pvId");
+
+        int numeroPdv = 1;
         while(queryPdv.next())
         {
+            // Changement de la police d'écriture
             painter.setPen(QColor(85,78,78,255));
             painter.setFont(QFont("Tahoma",8));
-            QString leNo = queryPdv.value(0).toString();
-            painter.drawText(horizontale,1800,"N. " + leNo);
+
+            // Numéro du point de vente (c'est un compteur)
+            QString leNo = QString::number(numeroPdv);
+
+            // Retour à la ligne
+            verticale -= 1500;
+            if(numeroPdv % 4 == 1){
+                verticale += 1500;
+                horizontale = 150;
+                painter.drawLine(0,verticale + 1300,9100,verticale + 1300);
+                painter.drawLine(9100,verticale - 500,9100,verticale + 1300);
+            }else{
+                horizontale += 2300;
+            }
+
+            // Affichage des points de vente
+            painter.drawLine(horizontale - 150,verticale - 500,horizontale - 150 ,verticale + 1300);
+            //painter.drawText(horizontale,verticale,"point de vente n°" + queryPdv.value(0).toString());
+            painter.drawText(horizontale,verticale,"point de vente n°" + leNo);
             QString leLib = queryPdv.value(1).toString();
-            painter.drawText(horizontale,1950,leLib);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,leLib);
             QString act = queryPdv.value(2).toString();
-            painter.drawText(horizontale,2100,act);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,act);
             QString leNom = queryPdv.value(3).toString();
             QString lePrenom = queryPdv.value(4).toString();
-            painter.drawText(horizontale,2250,leNom + " " + lePrenom);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,leNom + " " + lePrenom);
             QString leTel = queryPdv.value(5).toString();
-            painter.drawText(horizontale,2400,"Tel. " + leTel);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,"Tel. " + leTel);
+            QString leMail = queryPdv.value(9).toString();
+            verticale+=150;
+            painter.drawText(horizontale,verticale,leMail);
             QString laRue = queryPdv.value(6).toString();
-            painter.drawText(horizontale,2550,laRue);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,laRue);
             QString leCP = queryPdv.value(7).toString();
-            painter.drawText(horizontale,2700,leCP);
+            verticale+=150;
+            painter.drawText(horizontale,verticale,leCP);
             QString laVille = queryPdv.value(8).toString();
-            painter.drawText(horizontale,2850,laVille);
-            horizontale = horizontale + 2000;
-        }
+            verticale+=150;
+            painter.drawText(horizontale,verticale,laVille);
+            verticale += 300;
+            numeroPdv ++;
+        } // Fin while queryPdv
 
-        //les rayons
-        QSqlQuery queryRayon;
-        queryRayon.exec("select distinct surType.libelle, surType.no from surType inner join typeP on surType.no=typeP.noSurType inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient);
-        while(queryRayon.next())
-        {
+        painter.drawLine(horizontale + 2150,verticale - 200,horizontale + 2150 ,verticale - 2000);
+
+        verticale += 500;
+
+        // Titre entre les points de vente et les rayons
+        painter.setPen(QColor(0,0,0,255));
+        painter.setFont(QFont("Tahoma",10));
+        painter.drawText(2500,verticale-400,"Produits disponibles à l'achat dans ces points de ventes :");
+
+        // On sélectionne tous les surtypes en fonction de l'id de l'utilisateur
+        QSqlQuery querySurType;
+        querySurType.exec("SELECT DISTINCT SurType.stLibelle, SurType.stId FROM SurType INNER JOIN TypeProduit ON SurType.stId = TypeProduit.tpSurType INNER JOIN Produit ON TypeProduit.tpId = Produit.prTypeProduit INNER JOIN Lot ON Produit.prId = Lot.lotProduit INNER JOIN QuoiVenduOu ON Lot.lotId = QuoiVenduOu.idLot INNER JOIN PointVente on PointVente.pvId = QuoiVenduOu.idPointVente INNER JOIN QuiAcheteOu ON PointVente.pvId = QuiAcheteOu.idPointVente INNER JOIN Utilisateur ON QuiAcheteOu.idUtilisateur = Utilisateur.usId  WHERE Utilisateur.usId =" + idUtilisateur +" ORDER BY SurType.stId");
+        while(querySurType.next())
+        {          
+            // Ajout d'une nouvelle page
+            if(verticale > 10000){
+                printer.newPage();
+                verticale = 200;
+                cptPage ++;
+
+                // Footer
+                createfooter(&painter,&dateDuJour,cptPage);
+                qDebug() << "nouvelle page (surtype) pour l'utilisateur " + idUtilisateur;
+            }
+
+            // Changement police d'écriture
             painter.setPen(QColor(77,88,235,255));
             painter.setFont(QFont("Tahoma",14));
-            QString lib = queryRayon.value(0).toString();
-            QString noRayon = queryRayon.value(1).toString();
-            QString quantiteProduit = "Qté";
-            QString prixProduit = "Prix";
-            QString modeProductionProduit = "Production";
-            QString dateRecolteProduite = "Date récolte";
-            QString joursDeConservationProduit = "Conservation";
-            painter.drawText(400,verticale,"Rayon : "+lib);
-            verticale = verticale + 300;
-            painter.setFont(QFont("Tahoma",8));
-            painter.drawText(4230,verticale,quantiteProduit);
-            painter.drawText(4850,verticale,prixProduit);
-            painter.drawText(5780,verticale,modeProductionProduit);
-            painter.drawText(6800,verticale,dateRecolteProduite);
-            painter.drawText(7800,verticale,joursDeConservationProduit);
 
-            //type de produit
+            // Affichage des surtypes
+            QString lib = querySurType.value(0).toString();
+            painter.drawText(150,verticale,lib);
+            QString idSurType = querySurType.value(1).toString();
+
+            // Affichage des intitulés pour les informations sur le lot            
+            painter.setFont(QFont("Tahoma",8));            
+            painter.drawText(3900,verticale,"Quantité");
+            painter.drawText(5000,verticale,"Prix Unitaire");
+            painter.drawText(6000,verticale,"Production");
+            painter.drawText(7500,verticale,"Récolté le");
+            painter.drawText(8300,verticale,"Conservation");
+            verticale = verticale + 300;
+
+            // On sélectionne tous les types de produits en fonction de l'id de l'utilisateur et de l'id du surtype
             QSqlQuery queryTypeProduit;
-            queryTypeProduit.exec("Select distinct typeP.libelle, typeP.no from typeP inner join produit on typeP.no=produit.noType inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noSurType ="+QString(noRayon));
+            queryTypeProduit.exec("SELECT DISTINCT TypeProduit.tpLibelle, TypeProduit.tpId FROM TypeProduit INNER JOIN Produit on TypeProduit.tpId = Produit.prTypeProduit INNER JOIN Lot ON Produit.prId = Lot.lotProduit INNER JOIN QuoiVenduOu ON Lot.lotId = QuoiVenduOu.idLot INNER JOIN PointVente on PointVente.pvId = QuoiVenduOu.idPointVente INNER JOIN QuiAcheteOu ON PointVente.pvId = QuiAcheteOu.idPointVente INNER JOIN Utilisateur ON QuiAcheteOu.idUtilisateur = Utilisateur.usId WHERE Utilisateur.usId =" + idUtilisateur + " AND tpSurType =" + QString(idSurType));
             while(queryTypeProduit.next())
             {
+                // Ajout d'une nouvelle page
+                if(verticale > 12500){
+                    printer.newPage();
+                    verticale = 200;
+                    cptPage ++;
+
+                    // Footer
+                    createfooter(&painter,&dateDuJour,cptPage);
+                    qDebug() << "nouvelle page (typeproduit) pour l'utilisateur " + idUtilisateur;
+                }
+
+                // Trait en dessous du surtype
+                painter.drawLine(0,verticale - 200,9100,verticale - 200);
+
+                // Changement police d'écriture
                 painter.setFont(QFont("Tahoma",11));
                 painter.setPen(QColor(55,53,53,255));
-                QString libTypeProduit = queryTypeProduit.value(0).toString();
-                QString noTypeProduit = queryTypeProduit.value(1).toString();
-                QImage img(libTypeProduit+".png");
-                img = img.scaledToHeight(500);
-                //img.load(libTypeProduit+".png");
-                painter.drawImage(QPoint(1000,verticale+100),img);
-                painter.drawText(1000,verticale,libTypeProduit);
-                verticale = verticale + 300;
 
+                // Trait en dessous du surtype
+                painter.drawLine(350,verticale + 80,3650,verticale + 80);
+                painter.drawLine(3650,verticale + 80,3800,verticale - 200);
+                painter.drawLine(350,verticale + 80,200,verticale - 200);
+
+                // Affichage des types de produits
+                QString libTypeProduit = queryTypeProduit.value(0).toString();
+                QString idTypeProduit = queryTypeProduit.value(1).toString();
+                painter.drawText(400,verticale,libTypeProduit);
+                verticale = verticale + 300;                
+
+                // On sélectionne tous les produits en fonction de l'id de l'utilisateur et de l'id du type de produit
                 QSqlQuery queryProduit;
-                //queryProduit.exec("Select libelle, no from produit where noType =" + QString(noTypeProduit));
-                queryProduit.exec("Select distinct produit.libelle, produit.no, count(produit.libelle) from produit inner join lot on produit.no=lot.noProduit inner join proposerA on lot.no=proposerA.noLot inner join ptsDeVente on ptsDeVente.no=proposerA.noPointDeVente inner join QAO on ptsDeVente.no=QAO.noPtsDeVente inner join utilisateur on QAO.noUtilisateur=utilisateur.no  where utilisateur.no="+noClient+" and noType ="+QString(noTypeProduit));
+                queryProduit.exec("SELECT DISTINCT Produit.prLibelle, Produit.prId, count(Produit.prLibelle) FROM Produit INNER JOIN Lot ON Produit.prId = Lot.lotProduit INNER JOIN QuoiVenduOu ON Lot.lotId = QuoiVenduOu.idLot INNER JOIN PointVente on PointVente.pvId = QuoiVenduOu.idPointVente INNER JOIN QuiAcheteOu ON PointVente.pvId = QuiAcheteOu.idPointVente INNER JOIN Utilisateur ON QuiAcheteOu.idUtilisateur = Utilisateur.usId WHERE Utilisateur.usId=" + idUtilisateur + " AND prTypeProduit =" + QString(idTypeProduit));
                 while(queryProduit.next())
                 {
+                    // Ajout d'une nouvelle page
+                    if(verticale > 12500){
+                        printer.newPage();
+                        verticale = 200;
+                        cptPage ++;
+
+                        // Footer
+                        createfooter(&painter,&dateDuJour,cptPage);
+                        qDebug() << "nouvelle page (produit) pour l'utilisateur " + idUtilisateur;
+                    }
+
+                    // Image du produit
+                    QImage img("Golden.jpg");
+                    img = img.scaledToHeight(600);
+                    painter.drawImage(QPoint(400,verticale - 150),img);
+
+                    // Changement police d'écriture
                     painter.setFont(QFont("Tahoma",11));
+
+                    // Affichage du libellé du produit
                     QString libProduit = queryProduit.value(0).toString();
-                    QString noProduit = queryProduit.value(1).toString();
-                    QImage img(libProduit+".jpg");
-                    img = img.scaledToHeight(300);
-                    painter.drawImage(QPoint(3700,verticale + 250),img);
-                    painter.drawRect(700,verticale - 200,8100,900);
-                    painter.drawText(1900,verticale,libProduit);
+                    QString idProduit = queryProduit.value(1).toString();
+                    painter.drawText(1600,verticale,libProduit);
 
-                    int nbProduits = queryProduit.value(2).toInt();
-                    int cptTaille;
-                    cptTaille = nbProduits * 300;
+                    int nbLot = 1;
 
-                    // Notre lot
-
-                    QSqlQuery queryLot("Select qte, prixUnitaire, unite, modeDeProd, dateDeRecolte, nbrJoursDeConservation from lot where no="+QString(noProduit));
+                    // On sélectionne les lots qui concernent chaque produit
+                    QSqlQuery queryLot("SELECT lotQuantite, lotPrixUnitaire, Unite.libelle, ModeProduction.libelle, lotDateRecolte, lotDureeConservation FROM Lot INNER JOIN Unite ON Unite.id = Lot.lotUnite INNER JOIN ModeProduction ON ModeProduction.id = Lot.lotModeProduction WHERE lotProduit =" + QString(idProduit));
                     while(queryLot.next())
-                    {
+                    {                        
+                        // Cpt lot
+                        verticale += 300;
+
+                        // Ajout d'une nouvelle page
+                        if(verticale > 12500){
+                            printer.newPage();
+                            verticale = 200;
+                            cptPage ++;
+
+                            // Footer
+                            createfooter(&painter,&dateDuJour,cptPage);
+                            qDebug() << "nouvelle page (lot) pour l'utilisateur " + idUtilisateur;
+                        }
+
+                        // Changement police d'écriture
+                        painter.setFont(QFont("Tahoma",9));
+
+                        // Affichage des lots
                         QString quantiteLot = queryLot.value(0).toString();
                         QString prixLot = queryLot.value(1).toString();
                         QString uniteLot = queryLot.value(2).toString();
                         QString modeDeProdLot = queryLot.value(3).toString();
                         QString dateDeRecolteLot = queryLot.value(4).toString();
                         QString nbrJoursDeConservationLot = queryLot.value(5).toString();
-                        painter.setFont(QFont("Tahoma",9));
-                        painter.drawText(4200,verticale,quantiteLot);
-                        painter.drawText(4800,verticale,prixLot+"€ / "+uniteLot);
-                        painter.drawText(5800,verticale,modeDeProdLot);
-                        painter.drawText(6800,verticale,dateDeRecolteLot);
-                        painter.drawText(8000,verticale,nbrJoursDeConservationLot+" jour(s)");
-                    }
-                    verticale = verticale + cptTaille;
-                }                
-            }
-            verticale = verticale + 200;
-        }
-        QImage img("logo.png");
-        img.load("logo.png");
-        painter.drawImage(QPoint(0,100),img);
-        painter.setPen(QColor(0,0,0,255));
-        painter.drawLine(0,1300,9100,1300);
-        painter.drawLine(0,3100,9100,3100);
-        painter.drawLine(0,12500,9100,12500);
+                        painter.drawText(4000,verticale,quantiteLot + " " + uniteLot);
+                        painter.drawText(5100,verticale,prixLot+" €");
+                        painter.drawText(6000,verticale,modeDeProdLot);
+                        painter.drawText(7500,verticale,dateDeRecolteLot);
+                        painter.drawText(8500,verticale,nbrJoursDeConservationLot+" jour(s)");
 
-
-
+                        nbLot++;
+                    } // Fin While querylot
+                    verticale += 400;
+                }
+            } // Fin while queryTypeProduit
+            verticale += 200;
+        } // Fin while querySurType
         painter.end();
-    }
+    } // Fin while queryUtilisateur
+
     return 0;
 }
